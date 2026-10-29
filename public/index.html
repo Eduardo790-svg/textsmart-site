@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TextSmart</title>
+<meta name="description" content="Practice texting with AI and get honest feedback.">
+<meta name="theme-color" content="#0a0a0c">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0c;--card:#17171a;--line:#27272b;--tx:#f4f4f5;--mu:#8e8e98;--ac:#8b5cf6;--ac2:#c850e0;--ok:#4ade80;--warn:#fbbf24;--bad:#fb7185;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--tx);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{display:flex;flex-direction:column;overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+#main{flex:1;overflow-y:auto;width:100%;max-width:680px;margin:0 auto;padding:20px 18px 24px}
+#main.chat{display:flex;flex-direction:column;overflow:hidden;padding-bottom:8px}
+nav{display:flex;justify-content:center;border-top:1px solid var(--line);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;max-width:160px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;color:var(--mu);font-size:12px}
+nav button.on{color:#a78bfa}
+nav .i{font-size:20px;line-height:1}
+h1{font-size:30px;line-height:1.15;margin:6px 0 8px;letter-spacing:-.02em}
+h2{font-size:13px;color:var(--mu);font-weight:600;margin:26px 0 10px}
+.sub{color:var(--mu);margin:0 0 20px;line-height:1.5}
+.logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:22px;margin-bottom:22px}
+.logo b{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;font-size:20px}
+.cta{width:100%;min-height:56px;border-radius:999px;background:linear-gradient(90deg,var(--ac),var(--ac2));font-weight:600;font-size:18px;box-shadow:0 8px 30px #8b5cf640}
+.cta:disabled{opacity:.5}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}
+.stats .card{text-align:center;padding:16px 6px}
+.stats b{display:block;font-size:30px;margin:4px 0}
+.stats span{color:var(--mu);font-size:13px}
+.bar{height:8px;border-radius:9px;background:#2a2a2f;overflow:hidden;margin:12px 0 8px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:9px}
+.lv{display:flex;align-items:center;gap:12px}
+.lv .n{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--ac),var(--ac2));display:grid;place-items:center;font-weight:700;font-size:20px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.opt{width:100%;text-align:left;display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:10px}
+.opt.sel{border-color:var(--ac);background:#14121f}
+.opt .e{font-size:26px}
+.opt small{display:block;color:var(--mu);margin-top:2px;line-height:1.35}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2 .opt{display:block;margin:0}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--card);min-height:44px}
+.pill.sel{border-color:var(--ac);background:#14121f}
+.rej{color:var(--bad)}
+.pers{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px}
+.pers .pill{white-space:nowrap}
+.ph{display:flex;gap:14px;align-items:center}
+.av{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#f472b6,#c850e0);display:grid;place-items:center;font-weight:700;font-size:22px;flex:none}
+.tag{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:#241f3d;color:#c4b5fd;margin-left:6px}
+.tools{display:flex;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.tools .pill{padding:8px 14px;min-height:40px;font-size:14px}
+.tools .end{margin-left:auto;border-color:#5b1f2b;color:var(--bad)}
+#msgs{flex:1;overflow-y:auto;padding:16px 0;display:flex;flex-direction:column;gap:10px}
+.m{max-width:82%;padding:12px 16px;border-radius:20px;line-height:1.45;font-size:16px;overflow-wrap:anywhere}
+.m.a{background:#232327;align-self:flex-start;border-bottom-left-radius:6px}
+.m.u{background:linear-gradient(135deg,#7c4df0,#bb4fe0);align-self:flex-end;border-bottom-right-radius:6px}
+.tip{align-self:flex-end;max-width:82%;font-size:13px;color:var(--warn);background:#1f1a0a;border:1px solid #3b3210;border-radius:14px;padding:8px 12px}
+.dots{display:flex;gap:5px;padding:16px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--mu);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.3}30%{opacity:1}}
+.inp{display:flex;gap:8px;align-items:center;padding-top:10px}
+.inp input,textarea{flex:1;min-height:48px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--tx);font:inherit;font-size:16px;padding:0 18px;outline:none}
+textarea{border-radius:18px;padding:14px 16px;width:100%;min-height:130px;resize:vertical}
+.inp input:focus,textarea:focus{border-color:var(--ac)}
+.rd{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--card);flex:none;font-size:18px}
+.send{background:linear-gradient(135deg,var(--ac),var(--ac2));border:0}
+.hints{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.hints button{text-align:left;background:#14121f;border:1px solid var(--ac);border-radius:14px;padding:10px 14px;font-size:14px}
+.score{font-size:64px;font-weight:700;line-height:1;margin:8px 0}
+.cat{margin:12px 0}.cat .row{font-size:14px}
+ul{padding-left:20px;line-height:1.5;margin:6px 0}
+.bt{display:inline-block;margin-top:8px;font-size:13px;color:#c4b5fd;border:1px solid var(--line);border-radius:999px;padding:6px 14px}
+.err{background:#2a1218;border:1px solid #5b1f2b;border-radius:14px;padding:12px 14px;color:#fda4af;margin:10px 0}
+.empty{text-align:center;color:var(--mu);padding:40px 10px}
+.gb,.rb{border-radius:16px;padding:14px 16px;margin:14px 0}
+.gb{background:#0d1f14;border:1px solid #166534}.gb b{color:#4ade80}
+.rb{background:#2a1218;border:1px solid #7f1d2d}.rb b{color:#fb7185}
+.load{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;min-height:60vh;text-align:center}
+.orb{position:relative;width:110px;height:110px;margin-bottom:12px}
+.orb i{position:absolute;inset:0;border-radius:50%;border:3px solid var(--ac);opacity:0;animation:pulse 2.4s ease-out infinite}
+.orb i:nth-child(2){animation-delay:.8s;border-color:var(--ac2)}.orb i:nth-child(3){animation-delay:1.6s}
+.orb::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;font-size:38px;animation:spin 3s linear infinite}
+@keyframes pulse{0%{transform:scale(.3);opacity:.9}100%{transform:scale(1.2);opacity:0}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes grow{from{width:0}}
+.bar i{animation:grow 1s ease-out}
+#main:not(.chat) .card,.cat,.gb,.rb{animation:rise .5s ease both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+@media (prefers-reduced-motion:reduce){.dots i{animation:none}}
+</style>
+</head>
+<body>
+<div id="main"></div>
+<nav id="nav"></nav>
+<script>
+const SC=[["💬","First message on a dating app","You matched. Now say something worth replying to."],["✨","Replying after a match","She sent the first message. Build momentum."],["🔄","Reconnecting with someone","It went quiet weeks ago. Restart it naturally."],["📅","Asking for a date","It’s going well. Time to make plans."],["🔥","Keeping the conversation going","It’s starting to stall. Don’t let it die."],["🏜️","Handling a dry reply","She just said “haha yeah”. Recover gracefully."]];
+const RJ=[["🥶","Dry replies","She’s giving short, cold replies. She’s losing interest."],["⏳","Slow replies / left on read","She takes hours to reply or leaves you on read."],["👻","Ghosting then coming back","She disappeared for weeks and now texts like nothing happened."],["🙅","A polite “no” to a date","You asked her out. She kindly declined."],["🤝","“I just see you as a friend”","She wants to be friends. How do you handle it?"],["🎲","Mixed signals","She’s hot and cold. You never know where you stand."]];
+const DF={Easy:["Warm and enthusiastic. Gives lots to work with.","#4ade80"],Medium:["Friendly but brief. Tests if you can lead.","#fbbf24"],Hard:["Busy and skeptical. Needs real charisma.","#fb7185"],Expert:["Mixed signals and banter. She may lose interest.","#a78bfa"]};
+const PS=[["🎲","Random"],["😳","Shy"],["😏","Sarcastic"],["📅","Busy"],["😘","Flirty"],["💪","Confident"],["🤪","Playful"],["🥱","Dry"],["🧠","Intellectual"]];
+const LV=[["Beginner",0],["Learner",100],["Confident",500],["Smooth",1200],["Charismatic",2500],["Master",5000]];
+const NAV=[["home","⌂","Home"],["practice","💬","Practice"],["history","🕘","History"],["analyze","📷","Analyze"],["review","👤","Review"]];
+let S={xp:0,days:[],convs:[]},V="home",setup={sc:null,df:"Medium",ps:"Random"},cur=null,coach=false,busy=false,sample=null,rv={pf:"Hinge",res:null,load:false,err:""};
+try{S=Object.assign(S,JSON.parse(localStorage.getItem("tc1")||"{}"))}catch(e){}
+const save=()=>{try{localStorage.setItem("tc1",JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s);
+const esc=t=>String(t==null?"":t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const main=$("#main");
+window.claude={use:async n=>n==="downloads"?{save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(data);a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}}:null};
+const toImg=f=>new Promise((ok,no)=>{const im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok({type:"image/jpeg",data:c.toDataURL("image/jpeg",.85).split(",")[1]})};im.onerror=no;im.src=URL.createObjectURL(f)});
+sample={limits:async()=>({images:true}),json:async(prompt,o={})=>{const image=o.images&&o.images[0]?await toImg(o.images[0]):null;let r;try{r=await fetch("/api/ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({prompt,image,code:S.code||""})})}catch(e){throw new Error("No connection. Check your internet and try again.")}const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Something went wrong. Try again.");const t=d.text||"",a=t.indexOf("{"),b=t.lastIndexOf("}");try{return JSON.parse(t.slice(a,b+1))}catch(e){throw new Error("The AI reply was unreadable. Try again.")}}};
+
+async function ai(prompt){
+  if(!sample)throw new Error("AI isn’t available here. Open this page inside claude.ai.");
+  let last;
+  for(let i=0;i<2;i++){try{return await sample.json(prompt,{cache:false})}catch(e){last=e;if(e&&e.code==="not_granted")break}}
+  throw new Error(last&&last.message||"The AI didn’t respond. Try again.");
+}
+const lvl=()=>{let i=0;LV.forEach((l,k)=>{if(S.xp>=l[1])i=k});return i};
+const streak=()=>{let n=0,d=new Date();const set=new Set(S.days);if(!set.has(d.toDateString()))d.setDate(d.getDate()-1);while(set.has(d.toDateString())){n++;d.setDate(d.getDate()-1)}return n};
+const dscr=c=>c.persona?(c.persona.name||"Her"):"Her";
+
+function nav(){$("#nav").innerHTML=NAV.map(n=>`<button class="${V===n[0]?"on":""}" data-go="${n[0]}"><span class="i">${n[1]}</span>${n[2]}</button>`).join("")}
+function go(v){if(V==="chat"&&cur&&!cur.done)persist();if((v==="analyze"||v==="review")&&!S.premium&&FREE_DAILY<9999)v="premium";V=v;render()}
+function persist(){if(!cur)return;const i=S.convs.findIndex(c=>c.id===cur.id);if(i<0)S.convs.unshift(cur);else S.convs[i]=cur;save()}
+
+function render(){clearInterval(lt);
+  nav();main.className=V==="chat"?"chat":"";
+  ({home:rHome,practice:rPractice,chat:rChat,history:rHistory,score:rScore,review:rReview,analyze:rAnalyze,premium:rPremium})[V]();if(V==="score")countUp();
+  if(V!=="chat")main.scrollTop=0;
+}
+function rHome(){
+  const done=S.convs.filter(c=>c.done&&c.score!=null),avg=done.length?Math.round(done.reduce((a,c)=>a+c.score,0)/done.length):"–";
+  const i=lvl(),nx=LV[i+1],pct=nx?Math.min(100,(S.xp-LV[i][1])/(nx[1]-LV[i][1])*100):100;
+  main.innerHTML=`<div class="logo"><b>✦</b>TextSmart</div><h1>Ready to practice?</h1><p class="sub">Sharpen your texting with realistic AI conversations.</p>
+  <button class="cta" data-go="practice">Start a conversation</button>
+  <div class="stats"><div class="card">🔥<b>${streak()}</b><span>Day streak</span></div><div class="card">💬<b>${done.length}</b><span>Conversations</span></div><div class="card">📈<b>${avg}</b><span>Avg score</span></div></div>
+  <div class="card"><div class="lv"><div class="n">${i+1}</div><div style="flex:1"><b style="font-size:20px">${LV[i][0]}</b><div class="sub" style="margin:0">Level ${i+1}</div></div><div style="text-align:right"><span class="sub" style="font-size:13px">Total XP</span><br><b style="color:var(--warn);font-size:24px">⚡${S.xp}</b></div></div><div class="bar"><i style="width:${pct}%"></i></div><span class="sub" style="font-size:14px">${nx?(nx[1]-S.xp)+" XP to "+nx[0]:"Top level reached"}</span></div>
+  <div class="card" style="margin-top:14px"><b style="color:var(--warn);font-size:13px">DAILY CHALLENGE</b><div style="font-size:20px;font-weight:600;margin:6px 0">Handling a dry reply</div><div class="sub" style="margin-bottom:10px">She just said “haha yeah”. Recover gracefully.</div><button data-daily style="color:#a78bfa;font-weight:600;min-height:44px">Try it now →</button></div>`+badgesHTML();
+}
+function rPractice(){
+  const sc=(a,rej)=>a.map(s=>`<button class="opt ${setup.sc===s[1]?"sel":""}" data-sc="${esc(s[1])}" data-d="${esc(s[2])}"><span class="e">${s[0]}</span><span><b>${s[1]}</b><small>${s[2]}</small></span></button>`).join("");
+  main.innerHTML=`<h1>New conversation</h1><p class="sub">Pick a scenario, difficulty, and her personality. She’ll text you first.</p>
+  <h2>SCENARIOS</h2>${sc(SC)}<h2 class="rej">HANDLING REJECTION</h2>${sc(RJ)}
+  <h2>DIFFICULTY</h2><div class="grid2">${Object.keys(DF).map(k=>`<button class="opt ${setup.df===k?"sel":""}" data-df="${k}"><b style="color:${DF[k][1]}">${k}</b><small>${DF[k][0]}</small></button>`).join("")}</div>
+  <h2>HER PERSONALITY</h2><div class="pers">${PS.map(p=>`<button class="pill ${setup.ps===p[1]?"sel":""}" data-ps="${p[1]}">${p[0]} ${p[1]}</button>`).join("")}</div>
+  <div id="serr"></div><div style="height:16px"></div><button class="cta" id="go" ${setup.sc?"":"disabled"}>${setup.sc?"Start conversation":"Pick a scenario first"}</button>`;
+}
+async function start(){
+  if(!canStart()){V="premium";return render()}const b=$("#go");b.disabled=true;b.textContent="Setting up her profile…";
+  const rej=RJ.some(s=>s[1]===setup.sc),d=(SC.concat(RJ).find(s=>s[1]===setup.sc)||[])[2];
+  const used=S.convs.slice(0,15).map(c=>c.persona.name),pool=NAMES.filter(n=>!used.includes(n)),src=pool.length?pool:NAMES,nm=src[Math.floor(Math.random()*src.length)];const ps=setup.ps==="Random"?PS[1+Math.floor(Math.random()*(PS.length-1))][1]:setup.ps;
+  try{
+    const p=await ai(`Invent a realistic woman named ${nm} (age 22-34) for a texting practice app. Scenario: "${setup.sc}" (${d}). Personality: ${ps}. Difficulty: ${setup.df} (${DF[setup.df][0]}). Return JSON only: {"name":"first name","age":number,"bio":"one short line about her interests","style":"one short line on how she texts","opener":"her first text message to the user, fitting the scenario, personality and difficulty"}`);
+    cur={id:Date.now(),persona:{name:nm,age:p.age,bio:p.bio,style:p.style},sc:setup.sc,rej,df:setup.df,ps,msgs:[{r:"a",t:p.opener}],done:false,date:Date.now()};
+    persist();V="chat";render();
+  }catch(e){b.disabled=false;b.textContent="Start conversation";$("#serr").innerHTML=`<div class="err">${esc(e.message)}</div>`}
+}
+const sysP=c=>`You play ${c.persona.name}, ${c.persona.age}, in a texting practice app. About her: ${c.persona.bio}. How she texts: ${c.persona.style}. Personality: ${c.ps}. Difficulty: ${c.df} (${DF[c.df][0]}). Scenario: "${c.sc}". Text like a real person: short, casual messages. Warm up to genuine, respectful, interesting messages; cool off if the user is pushy, rude, needy or boring. Never break character or mention being an AI.`;
+const tr=c=>c.msgs.map(m=>(m.r==="u"?"User: ":"Her: ")+m.t).join("\n");
+function rChat(){
+  const c=cur,n=c.msgs.filter(m=>m.r==="u").length;
+  main.innerHTML=`<div class="card ph"><div class="av">${esc((c.persona.name||"?")[0])}</div><div style="min-width:0"><b style="font-size:19px">${esc(c.persona.name)}, ${esc(c.persona.age)}</b><span class="tag">${c.df.toUpperCase()}</span><span class="tag">${esc(c.ps.toUpperCase())}</span><div class="sub" style="margin:4px 0 0;font-size:14px">${esc(c.persona.bio)}</div></div></div>
+  <div class="tools"><button class="pill" id="coach">✦ Coach ${coach?"ON":"OFF"}</button>${window.speechSynthesis?`<button class="pill" id="voice">🔊 Voice ${voiceOn?"ON":"OFF"}</button>`:""}<span class="sub" style="margin:0" id="cnt">${n}/15</span><button class="pill end" id="end">■ End</button></div>
+  <div id="msgs"></div><div id="hints"></div>
+  <div class="inp"><button class="rd" id="hint" aria-label="Hint">💡</button>${(window.SpeechRecognition||window.webkitSpeechRecognition)?'<button class="rd" id="mic" aria-label="Voice message">🎤</button>':""}<input id="t" placeholder="Type a message…" autocomplete="off" enterkeyhint="send"><button class="rd send" id="snd" aria-label="Send">➤</button></div>`;
+  drawMsgs();
+}
+function drawMsgs(typing,err){
+  const box=$("#msgs");if(!box)return;
+  box.innerHTML=cur.msgs.map(m=>`<div class="m ${m.r}">${esc(m.t)}</div>${m.tip?`<div class="tip">💡 ${esc(m.tip)}</div>`:""}`).join("")+(typing?'<div class="m a dots"><i></i><i></i><i></i></div>':"")+(err?`<div class="err">${esc(err)} <button class="bt" id="retry">Retry</button></div>`:"");
+  box.scrollTop=box.scrollHeight;
+}
+async function reply(){
+  busy=true;drawMsgs(true);
+  try{
+    const r=await ai(`${sysP(cur)}\n\nConversation so far:\n${tr(cur)}\n\nWrite her next text. Return JSON only: {"reply":"her text","tip":"${coach?"one short, specific coaching tip about the user’s last message":""}"}`);
+    await new Promise(z=>setTimeout(z,600+Math.random()*900));
+    const last=cur.msgs[cur.msgs.length-1];if(coach&&r.tip&&last.r==="u")last.tip=r.tip;
+    cur.msgs.push({r:"a",t:r.reply});persist();busy=false;drawMsgs();if(voiceOn)say(r.reply);
+  }catch(e){busy=false;drawMsgs(false,e.message)}
+  const n=$("#cnt");if(n)n.textContent=cur.msgs.filter(m=>m.r==="u").length+"/15";
+}
+function sendMsg(){
+  const i=$("#t"),t=i.value.trim();if(!t||busy)return;
+  i.value="";i.focus();$("#hints").innerHTML="";
+  cur.msgs.push({r:"u",t,v:micUsed});micUsed=false;persist();reply();
+}
+async function hint(){
+  if(busy)return;const h=$("#hints");h.innerHTML='<div class="sub">Thinking of ideas…</div>';
+  try{const r=await ai(`${sysP(cur)}\n\nConversation:\n${tr(cur)}\n\nSuggest 2 good, genuine replies the USER could send next, in different tones. Return JSON only: {"options":["...","..."]}`);
+    h.innerHTML='<div class="hints">'+r.options.map(o=>`<button data-fill="${esc(o)}">${esc(o)}</button>`).join("")+"</div>"}
+  catch(e){h.innerHTML=`<div class="err">${esc(e.message)}</div>`}
+}
+async function endChat(){
+  if(busy)return;if(cur.msgs.filter(m=>m.r==="u").length<2){alert("Send at least 2 messages first.");return}
+  V="score";main.className="";loading();nav();
+  const cats=cur.rej?"Staying calm, Not needy or pushy, Graceful exit, Self-respect, Conversation flow":"Conversation flow, Curiosity and questions, Humor and playfulness, Confidence, Empathy, Authenticity and respect, Message length and pacing";
+  try{
+    const r=await ai(`You are a warm, honest texting coach. Score the USER (not "Her") in this practice chat. Scenario: "${cur.sc}", difficulty ${cur.df}. Penalize pushy, creepy or disrespectful messages and say why. Teach genuine connection, never manipulation.\n\n${tr(cur)}${voiceNote()}\n\nReturn JSON only: {"overall":0-100,"cats":[{"name":"...","score":0-100}] using exactly these names: ${cats},"good":["3 things done well"],"improve":["3 things to improve"],"rewrites":[{"orig":"an actual user message","better":"stronger version","why":"short reason"}] (3 items),"focus":"one tip for next time","voice":"filler words, pacing and tone feedback if voice messages were sent, else empty"}`);
+    cur.done=true;cur.score=Math.round(r.overall);cur.report=r;S.xp+=Math.round(20+cur.score*.8);
+    const d=new Date().toDateString();if(!S.days.includes(d))S.days.push(d);persist();
+  }catch(e){V="chat";render();drawMsgs(false,e.message);return}
+  render();
+}
+function rScore(){
+  const c=cur,r=c.report;if(!r){V="history";return render()}
+  const col=c.score>=75?"var(--ok)":c.score>=50?"var(--warn)":"var(--bad)";
+  main.innerHTML=`<h1>Your scorecard</h1><p class="sub">${esc(c.sc)} · ${c.df} · ${esc(dscr(c))}</p>
+  <div class="card" style="text-align:center"><div class="sub" style="margin:0">Overall</div><div class="score" id="sc" style="color:${col}">${c.score}</div></div>
+  <h2>CATEGORIES</h2>${(r.cats||[]).map(k=>`<div class="cat"><div class="row"><span>${esc(k.name)}</span><b>${Math.round(k.score)}</b></div><div class="bar"><i style="width:${Math.max(0,Math.min(100,k.score))}%"></i></div></div>`).join("")}
+  <div class="gb"><b>✓ Done well</b><ul>${(r.good||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  <div class="rb"><b>✗ You can improve</b><ul>${(r.improve||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+  <h2>STRONGER REPLIES</h2>${(r.rewrites||[]).map(w=>`<div class="card" style="margin-bottom:10px"><div class="sub" style="margin:0 0 6px">You: ${esc(w.orig)}</div><div style="color:#c4b5fd">Try: ${esc(w.better)}</div><div class="sub" style="margin:6px 0 0;font-size:14px">${esc(w.why)}</div></div>`).join("")}
+  ${r.voice?`<div class="card" style="margin:14px 0"><b>Voice feedback</b><div class="sub" style="margin:6px 0 0">${esc(r.voice)}</div></div>`:""}<div class="card" style="margin:14px 0"><b>Next time</b><div class="sub" style="margin:6px 0 0">${esc(r.focus)}</div></div>
+  ${extraScore()}<button class="cta" data-go="practice">Practice again</button>`;
+}
+function rHistory(){
+  const L=S.convs;
+  main.innerHTML=`<h1>History</h1><p class="sub">Your past practice chats.</p>`+(L.length?L.map(c=>`<div class="card" style="margin-bottom:12px"><div class="ph" data-open="${c.id}" style="cursor:pointer"><div class="av" style="width:48px;height:48px;font-size:19px">${esc((c.persona.name||"?")[0])}</div><div style="min-width:0;flex:1"><b>${esc(c.persona.name)}</b>${c.done?`<span class="tag" style="background:#10261a;color:var(--ok)">${c.score}/100</span>`:'<span class="tag" style="background:#2a230d;color:var(--warn)">IN PROGRESS</span>'}<div class="sub" style="margin:2px 0 0;font-size:14px">${esc(c.sc)} · ${c.df} · ${esc(c.ps)}</div><div class="sub" style="margin:2px 0 0;font-size:13px">${new Date(c.date).toLocaleDateString()} · ${c.msgs.length} msgs</div></div></div>
+  <div class="row" style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px"><button data-open="${c.id}" style="color:#a78bfa;font-weight:600;min-height:44px">${c.done?"View scorecard":"Resume"}</button><button data-del="${c.id}" style="color:var(--mu);min-height:44px">Delete</button></div></div>`).join(""):`<div class="empty">No conversations yet.<br><br><button class="cta" data-go="practice">Start your first one</button></div>`);
+}
+function rReview(){
+  const r=rv.res;
+  main.innerHTML=`<h1>Profile review</h1><p class="sub">Get feedback on your dating bio and opening messages. Written for your real self, never for fake claims.</p>
+  <h2>PLATFORM</h2><div class="pills">${["Hinge","Tinder","Bumble","Instagram","Other"].map(p=>`<button class="pill ${rv.pf===p?"sel":""}" data-pf="${p}">${p}</button>`).join("")}</div>
+  <h2>YOUR BIO</h2><textarea id="bio" placeholder="Paste your bio here…"></textarea>
+  <h2>OPENING MESSAGES (optional)</h2><textarea id="op" placeholder="Paste one opener per line…" style="min-height:90px"></textarea>
+  ${rv.err?`<div class="err">${esc(rv.err)}</div>`:""}<div style="height:14px"></div><button class="cta" id="rvgo" ${rv.load?"disabled":""}>${rv.load?"Reviewing…":"Review my profile"}</button>
+  ${r?`<h2>RESULT</h2><div class="card" style="text-align:center"><div class="score">${Math.round(r.score)}</div><div class="sub" style="margin:0">Profile score</div></div><h2>WORKS WELL</h2><ul>${(r.works||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><h2>FIX</h2><ul>${(r.fix||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ul><h2>REWRITTEN BIOS</h2>${(r.rewrites||[]).map(w=>`<div class="card" style="margin-bottom:10px"><b>${esc(w.style)}</b><div style="margin:6px 0">${esc(w.text)}</div><button class="bt" data-copy="${esc(w.text)}">Copy</button></div>`).join("")}${(r.openers||[]).length?`<h2>OPENERS</h2>${r.openers.map(o=>`<div class="card" style="margin-bottom:10px"><div class="sub" style="margin:0 0 6px">${esc(o.note)}</div><div style="color:#c4b5fd">${esc(o.better)}</div><button class="bt" data-copy="${esc(o.better)}">Copy</button></div>`).join("")}`:""}`:""}`;
+}
+async function review(){
+  const bio=$("#bio").value.trim(),op=$("#op").value.trim();if(!bio)return;
+  rv.load=true;rv.err="";render();$("#bio").value=bio;$("#op").value=op;
+  try{rv.res=await ai(`You are an honest dating-profile coach. Platform: ${rv.pf}. Review this bio and openers. Keep advice genuine; never suggest fake claims or deception.\nBIO:\n${bio}\nOPENERS:\n${op||"(none)"}\nReturn JSON only: {"score":0-100,"works":["..."],"fix":["..."],"rewrites":[{"style":"Funny|Confident|Genuine","text":"rewritten bio"}],"openers":[{"note":"feedback on the original","better":"stronger opener"}]}`)}
+  catch(e){rv.err=e.message}
+  rv.load=false;render();
+}
+
+const PAYPAL_URL="https://www.paypal.com/webapps/billing/plans/subscribe?plan_id=P-7V0900068N7347355NLKPBEI",FREE_DAILY=2;
+const CODES=["359f145ae848733ff2dd76fddc0f42a62a581119d049be7b8a06d6362bade70e","8f27ce7a488b7b35b360698a69a0c31be7a03bc6a180430b7e7db6f72c24ed16","21a05bf5e9817fcc96247528867cd34764e14000661d1595c2c375c7950825de","80894689cab3117b443ec6b624ead658f44b3a29b8bc59c52ffbb8ab6172a6e6","5afe002b74606379bf3ab28d0048aff60aeee8f32c06105661f45d66025552ff","3c3633a68788846e2c86b8f86e4f5adc2e4421f5a6d699e359d3561f00fb5851","21d226a4cd5b9edc68c06beb50792333a61815ddb33301bc439015b1d2923640","064dcc1d5dfe89d5c6215f6b7694db3aeed55c3d41743c9cb893a7707ea71ed5","16495637a6e0de2d45f93d6119d667953099b9b6855c1291d5ac2899c78d4880","bbc0101abf15547b6d016168babb02c4d8bd88280f2651f703b3916f2da9a050","716cb2aa801d7a45216242a48877313b3f5bc7e766f0e1296fcfff670bfe3764","60a11b622f13c821f15b95e02e3d33b813d66920630c6cf4e757da5457d3c4f6","87c6f1ae10fb40c3db7f5a253fb0426f8342fc78758e045056516d5f88f73e6b","0ff0b6e1a44a9025fd30e682f88ebca3db54aa17a64ad4b8b24deeba7ce03233","9412b044e7cb42eec72d81e067e98a150eb685bf3f738ec8d10c9aa4900ab7bb","d28bb467989fb847edeaca6685fdff3861afe70a84d1c7007a68c57a451dae1a","09c01d9e566c324150b2ef8f5924077b2a8077975dc5a55c5ceacdc05827c1c8","bac095a6762861e1fd815d59d2abe49b9bcb399bdd40a8a5869ba75007aa4213","23d31378c0e8b81ec0aa00f9d088d6dc5c05b127df414f4f6e2834736ef879e6","d5740a32e92f49980d514af10ecb0d2d81b21539472aea8e8a6088245640c5b0"];const hash=async s=>[...new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s)))].map(b=>b.toString(16).padStart(2,"0")).join("");const chk=()=>hash("ts1:"+(S.code||"")).then(h=>{if(S.premium&&!CODES.includes(h)){S.premium=false;save();render()}}).catch(()=>{});chk();
+const NAMES=["Ava","Maya","Elena","Sofia","Chloe","Nina","Zoe","Layla","Priya","Hannah","Mia","Isla","Tessa","Camila","Leah","Jade","Nora","Ruby","Aaliyah","Bianca","Keira","Talia","Grace","Imani","Lucia","Yara","Dana","Emma","Freya","Gia"];
+let voiceOn=false,micUsed=false,thm="dark",an={res:null,load:false,err:""};
+const today0=()=>{const d=new Date();d.setHours(0,0,0,0);return d.getTime()};
+const canStart=()=>S.premium||S.convs.filter(c=>c.date>=today0()&&!c.branchOf).length<FREE_DAILY;
+const say=t=>{try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(t))}catch(e){}};
+const voiceNote=()=>{const v=cur.msgs.filter(m=>m.r==="u"&&m.v);return v.length?`\n\n(Sent by voice, transcribed: ${v.map(m=>'"'+m.t+'"').join("; ")}. Give filler word, pacing and confidence feedback in "voice".)`:""};
+function mic(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R)return alert("Voice input isn’t supported in this browser.");const r=new R();r.lang="en-US";r.onresult=e=>{$("#t").value=e.results[0][0].transcript;micUsed=true;sendMsg()};r.start()}
+function badgesHTML(){const d=S.convs.filter(c=>c.done),B=[["First conversation",d.length>0],["First 80+ score",d.some(c=>c.score>=80)],["7-day streak",streak()>=7],["Beat Expert",d.some(c=>c.df==="Expert"&&c.score>=60)],["Rejection survivor",d.some(c=>c.rej)],["Tried 5 personalities",new Set(d.map(c=>c.ps)).size>=5],["Comeback",d.some(c=>c.parentScore!=null&&c.score>c.parentScore)]];return `<h2>BADGES</h2><div class="pills">${B.map(b=>`<span class="pill" style="${b[1]?"border-color:var(--ac);background:#14121f":"opacity:.45"}">${b[1]?"🏅":"🔒"} ${b[0]}</span>`).join("")}</div><div style="height:16px"></div><button class="cta" data-go="premium">${S.premium?"Premium active":"Go Premium"}</button><h2>BACKUP</h2><div class="pills"><button class="pill" data-bk>Save progress</button><label class="pill" style="position:relative;cursor:pointer">Restore<input type="file" id="rs" accept=".json" style="position:absolute;inset:0;opacity:0;width:100%;cursor:pointer"></label></div><p class="sub" style="font-size:13px;margin-top:8px">Progress is saved in this browser. Save a backup file to move it to another device.</p>`}
+function extraScore(){const c=cur;let h="";if(c.parentScore!=null)h+=`<div class="card" style="margin:14px 0"><b>Original vs. new path</b><div class="sub" style="margin:6px 0 0">Original ${c.parentScore}, new ${c.score}. ${c.score>c.parentScore?"Your new reply worked better.":c.score<c.parentScore?"The original did better. Try another angle.":"Same score."}</div></div>`;const u=c.msgs.map((m,i)=>m.r==="u"&&i>0?`<button class="opt" data-rp="${i}"><span><small>Try a different reply to:</small>${esc(m.t)}</span></button>`:"").join("");return h+`<h2>REPLAY AND REWIND</h2>${u}<h2>SHARE</h2><div class="pills">${["dark","neon","minimal"].map(t=>`<button class="pill ${thm===t?"sel":""}" data-th="${t}">${t}</button>`).join("")}<button class="pill" data-share>Download image</button></div><div style="height:16px"></div>`}
+function shareImg(){const c=cur,cv=document.createElement("canvas");cv.width=1080;cv.height=1350;const x=cv.getContext("2d"),T={dark:["#0a0a0c","#f4f4f5","#8b5cf6"],neon:["#12002b","#ffffff","#ff3df0"],minimal:["#f5f5f4","#18181b","#7c3aed"]}[thm],cats=(c.report.cats||[]).slice(0,3);x.fillStyle=T[0];x.fillRect(0,0,1080,1350);x.fillStyle=T[2];x.fillRect(0,0,1080,16);x.fillStyle=T[1];x.font="700 56px sans-serif";x.fillText("TextSmart",80,150);x.fillStyle=T[2];x.font="700 340px sans-serif";x.fillText(c.score,80,560);x.fillStyle=T[1];x.font="500 44px sans-serif";x.fillText("overall texting score",90,640);cats.forEach((k,i)=>{const y=800+i*150;x.fillStyle=T[1];x.font="500 40px sans-serif";x.fillText(k.name,80,y);x.globalAlpha=.15;x.fillRect(80,y+24,920,22);x.globalAlpha=1;x.fillStyle=T[2];x.fillRect(80,y+24,Math.max(0,Math.min(100,k.score))*9.2,22)});x.fillStyle=T[1];x.font="500 36px sans-serif";x.fillText("Practice texting with TextSmart",80,1270);cv.toBlob(async b=>{const d=await claude.use("downloads");if(!d)return alert("Saving isn’t available here.");try{await d.save({filename:"textcoach-score.png",data:b})}catch(e){}},"image/png")}
+function rAnalyze(){const r=an.res,L=a=>(a||[]).map(x=>`<li>${esc(x)}</li>`).join("");main.innerHTML=`<h1>Analyze my chat</h1><p class="sub">Upload a screenshot of a real conversation. Blur or crop names and private info first. The image is only used for this analysis and isn’t saved.</p><label class="cta" style="display:grid;place-items:center;position:relative;cursor:pointer;${an.load?"opacity:.5":""}">${an.load?"Analyzing…":"Upload a screenshot"}<input type="file" id="shot" accept="image/*" ${an.load?"disabled":""} style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer"></label>${an.err?`<div class="err">${esc(an.err)}</div>`:""}`+(r?`<h2>HER INTEREST</h2><div class="card"><b>${esc(r.interest)}</b><div class="sub" style="margin:6px 0 0">${esc(r.why)}</div></div><h2>DONE WELL</h2><ul>${L(r.good)}</ul><h2>MISSED</h2><ul>${L(r.missed)}</ul><h2>SUGGESTED REPLIES</h2>${(r.replies||[]).map(p=>`<div class="card" style="margin-bottom:10px"><b>${esc(p.tone)}</b><div style="margin:6px 0">${esc(p.text)}</div><div class="sub" style="margin:0;font-size:14px">${esc(p.why)}</div><button class="bt" data-copy="${esc(p.text)}">Copy</button></div>`).join("")}<button class="cta" data-prac>Practice this scenario</button>`:"")}
+async function analyze(f){an.load=true;an.err="";rAnalyze();try{if(!sample||!(await sample.limits()).images)throw new Error("Image upload isn’t available here.");an.res=await sample.json(`You are a warm, honest texting coach. This screenshot is a real text conversation; the user is the person on the right. Return JSON only: {"interest":"Low, Medium or High","why":"short reasons","good":["what the user did well"],"missed":["mistakes or missed opportunities"],"replies":[{"tone":"Funny","text":"","why":""},{"tone":"Confident","text":"","why":""},{"tone":"Sweet","text":"","why":""}]}. Keep advice genuine and respectful, never manipulative.`,{images:[f],cache:false})}catch(e){an.err=e.message||"Couldn’t read that image."}an.load=false;rAnalyze()}
+function rPremium(){main.innerHTML=`<h1>Premium</h1><p class="sub">${S.premium?"Premium is active. Unlimited conversations.":`Free accounts get ${FREE_DAILY} conversations a day.`}</p><div class="card"><b style="font-size:20px">Premium: $5 a month</b><div class="sub" style="margin:4px 0 0;font-size:14px">Launch price. Lock it in while it lasts.</div><ul><li>Unlimited conversations</li><li>All difficulty levels and personalities</li><li>Screenshot analysis and profile reviews</li></ul></div><div style="height:14px"></div>${PAYPAL_URL?`<a class="cta" style="display:grid;place-items:center;text-decoration:none;color:inherit" href="${PAYPAL_URL}" target="_blank" rel="noopener">Pay with PayPal</a>`:`<div class="err">Add your PayPal payment link to PAYPAL_URL in the page code to turn on checkout.</div>`}<div class="card" style="margin-top:16px"><b>Just subscribed?</b><div class="sub" style="margin:6px 0 0;font-size:14px">Your unlock code will be sent to you soon after you subscribe. Keep an eye on the email address you used with PayPal, and check your spam folder.</div></div><div class="card" style="margin-top:12px"><b>Cancel anytime</b><div class="sub" style="margin:6px 0 0;font-size:14px">In PayPal, go to Settings, then Payments, then Manage automatic payments. Choose TextSmart and cancel. You won’t be charged again.</div></div><h2>ALREADY PAID?</h2><div class="inp"><input id="code" placeholder="Unlock code"><button class="rd send" data-unlock aria-label="Unlock">✓</button></div>`}
+function extra(t,d){if(d.bk){(async()=>{const dl=await claude.use("downloads");if(!dl)return alert("Saving isn’t available here.");try{await dl.save({filename:"textsmart-backup.json",data:new Blob([JSON.stringify(S)],{type:"application/json"})})}catch(e){}})();return 1}if(d.pick){$("#shot").click();return 1}if(d.prac){setup.sc="Keeping the conversation going";go("practice");return 1}if(d.th){thm=d.th;rScore();return 1}if(d.share){shareImg();return 1}if(d.rp){const i=+d.rp,o=cur;cur={id:Date.now(),persona:o.persona,sc:o.sc,rej:o.rej,df:o.df,ps:o.ps,msgs:o.msgs.slice(0,i),done:false,date:Date.now(),branchOf:o.id,parentScore:o.score};persist();V="chat";render();return 1}if(d.unlock){const cd=$("#code").value.trim().toUpperCase();hash("ts1:"+cd).then(h=>{if(CODES.includes(h)){S.premium=true;S.code=cd;save();rPremium()}else alert("That code isn’t valid.")});return 1}if(t.id==="voice"){voiceOn=!voiceOn;t.textContent="🔊 Voice "+(voiceOn?"ON":"OFF");if(!voiceOn)try{speechSynthesis.cancel()}catch(e){}return 1}if(t.id==="mic"){mic();return 1}}
+let lt;
+function loading(){main.innerHTML='<div class="load"><div class="orb"><i></i><i></i><i></i></div><b id="lt" style="font-size:20px">Reading your messages…</b><span class="sub">Your scorecard is almost ready</span></div>';const M=["Reading your messages…","Checking your flow and humor…","Spotting your best moments…","Writing your feedback…"];let i=0;clearInterval(lt);lt=setInterval(()=>{const e=$("#lt");if(!e)return clearInterval(lt);e.textContent=M[++i%M.length]},2200)}
+function countUp(){const e=$("#sc");if(!e)return;const to=+e.textContent;let t0=null;const f=ts=>{t0=t0||ts;const p=Math.min(1,(ts-t0)/1100);e.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+document.addEventListener("change",e=>{if(e.target.id==="rs"&&e.target.files[0])e.target.files[0].text().then(t=>{try{const o=JSON.parse(t);if(o&&Array.isArray(o.convs)){S=Object.assign({xp:0,days:[],convs:[]},o);save();chk();render()}else alert("That isn’t a valid backup.")}catch(x){alert("That isn’t a valid backup.")}});if(e.target.id==="shot"&&e.target.files[0])analyze(e.target.files[0])});
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button,[data-open]");if(!t)return;const d=t.dataset;
+  if(extra(t,d))return;if(d.go)return go(d.go);
+  if(d.daily){setup.sc="Handling a dry reply";return go("practice")}
+  if(d.sc){setup.sc=d.sc;return rPractice()}
+  if(d.df){setup.df=d.df;return rPractice()}
+  if(d.ps){setup.ps=d.ps;return rPractice()}
+  if(t.id==="go")return start();
+  if(t.id==="coach"){coach=!coach;t.textContent="✦ Coach "+(coach?"ON":"OFF");return}
+  if(t.id==="end")return endChat();
+  if(t.id==="hint")return hint();
+  if(t.id==="snd")return sendMsg();
+  if(t.id==="retry")return reply();
+  if(d.fill){const i=$("#t");i.value=d.fill;$("#hints").innerHTML="";i.focus();return}
+  if(d.open){cur=S.convs.find(c=>c.id==d.open);if(cur){V=cur.done?"score":"chat";render()}return}
+  if(d.del){if(confirm("Delete this conversation?")){S.convs=S.convs.filter(c=>c.id!=d.del);save();rHistory()}return}
+  if(d.pf){const b=$("#bio")?$("#bio").value:"",o=$("#op")?$("#op").value:"";rv.pf=d.pf;rReview();$("#bio").value=b;$("#op").value=o;return}
+  if(t.id==="rvgo")return review();
+  if(d.copy){try{navigator.clipboard.writeText(d.copy);t.textContent="Copied"}catch(x){}return}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="t"){e.preventDefault();sendMsg()}});
+render();
+</script>
+</body>
+</html>
